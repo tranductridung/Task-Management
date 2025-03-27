@@ -13,8 +13,10 @@
  * **Authentication**: JSON Web Token (JWT)  
 
  ## Project Structure
+```
 TASKMANAGEMENT/ │── backend/ # Server-side code (Express.js) │ ├── models/ # SQL models │ ├── routes/ # API routes │ ├── controllers/ # Business logic │ ├── config/ # Configuration files │ ├── middleware/ # Authentication & validation │ ├── .env # Environment variables │ ├── package.json # Dependencies and scripts │ ├── server.js # Main server file │ │── frontend/ # Client-side code (React) │ ├── src/ │ │ ├── components/ # Reusable components │ │ ├── pages/ # Page components │ │ ├── api/ # API and Auth config │ │ ├── context/ # Context of react
 │ │ ├── index.js # Entry point │ ├── public/ # Static files │ ├── App.jsx # Main React component │ ├── package.json # Dependencies and scripts │── README.md # Project documentation
+```
 
  ## Install and run website
  ### Step 1: Clone the Repository
