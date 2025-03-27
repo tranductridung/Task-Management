@@ -2,31 +2,52 @@
  ## Overview
 
  ## Features
-  Add, edit and delete task
-  Assign status to task
-  Add another user to task
-  User registation, login and authentication
+ * Add, edit and delete task
+ * Assign status, comment to task
+ * Add another user to task
+ * User registation, login and authentication
   
  ## Technologies Used
-Frontend: React, Tailwind, Vite
-Backend: Express.js, Node.js, MySQL
-Authentication: JSON Web Token (JWT)
+ * **Frontend**: React, Tailwind, Vite
+ * **Backend**: Express.js, Node.js, MySQL
+ * **Authentication**: JSON Web Token (JWT)  
 
  ## Project Structure
-
+TASKMANAGEMENT/
+│── backend/                # Server-side code (Express.js)
+│   ├── Models/             # SQL models
+│   ├── Routes/             # API routes
+│   ├── Controllers/        # Business logic
+│   ├── Config/             # Configuration files
+│   ├── Middleware/         # Authentication & validation
+│   ├── .env                # Environment variables
+|   │── package.json        # Dependencies and scripts
+│   ├── server.js           # Main server file
+│
+│── frontend/               # Client-side code (React)
+│   ├── src/
+│   │   ├── components/     # Reusable components
+│   │   ├── pages/          # Page components
+│   │   ├── api/            # API and Auth config
+│   │   ├── context/        # Context of react         
+│   │   ├── index.js        # Entry point
+│   ├── public/             # Static files
+│   ├── App.jsx             # Main React component
+|   │── package.json        # Dependencies and scripts
+│── README.md               # Project documentation
 
  ## Install and run website
  ### Step 1: Clone the Repository
-```bash
+```
 git clone https://github.com/tranductridung/Task-Management.git
 ```
 
-```bash
+```
 cd Task-Management
 ```
 
  ### Step 2: Install Backend Dependencies
-```bash
+```
 cd backend
 ```
 
@@ -39,7 +60,7 @@ npm install
 cd frontend
 ```
 
-```bash
+```
 npm install
 ```
 
@@ -67,20 +88,3 @@ cd frontend
 npm run dev
 ```
 The website will be avaiable at `http://localhost:5173`
-
-## API Endpoints
-### User Endpoints
-| Method | Endpoint      | Description |
-|:-------|:--------------|:-----------|
-| POST   | /api/users/register | Register new user      |
-| POST   | /api/users/login |   User login|
-| POST   | /api/users/logout | User logout |
-| GET    | /api/users/refreshToken | Refresh access token  |
-| POST   | /api/users/changePassword | Change user password|
-| GET    | /api/users/verifyToken | Check validate token|
-| GET    | /api/users | Get user information  |
-| DELETE | /api/users | Delete user account |
-| PUT    | /api/users | Update user information |
-
-
-
