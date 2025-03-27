@@ -36,6 +36,8 @@ TASKMANAGEMENT/
 |   │── package.json        # Dependencies and scripts
 │── README.md               # Project documentation
 
+
+project-root/ │── backend/ # Server-side code (Express.js) │ ├── models/ # Database models (Mongoose) │ ├── routes/ # API endpoints │ ├── controllers/ # Business logic │ ├── middleware/ # Authentication & validation │ ├── config/ # Configurations (e.g., database, JWT) │ ├── server.js # Main Express.js server file │ │── frontend/ # Client-side code (React) │ ├── src/ │ │ ├── components/ # Reusable components (buttons, modals, etc.) │ │ ├── pages/ # Page components (Home, Login, Dashboard) │ │ ├── services/ # API calls (fetch, axios) │ │ ├── App.js # Root React component │ │ ├── index.js # Entry point │ ├── public/ # Static assets (images, icons, etc.) │ │── .env # Environment variables │── package.json # Dependencies & scripts │── README.md # Project documentation │── .gitignore # Ignored files in Git
  ## Install and run website
  ### Step 1: Clone the Repository
 ```
