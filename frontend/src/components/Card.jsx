@@ -1,4 +1,3 @@
-import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useTasksContext } from "../context/tasksContext";
 import api from "../api/api";
@@ -10,11 +9,11 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import { GoDotFill } from "react-icons/go";
 import { MdKeyboardDoubleArrowUp, MdKeyboardArrowUp } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
+import { formatDate } from "../utils/helper";
 
 const Card = ({ setOpenAddEditModal }) => {
   const [openMenuId, setOpenMenuId] = useState(false);
   const { tasks, setTasks } = useTasksContext();
-
   const priorityStyles = {
     High: {
       textStyle: "text-red-500",
@@ -32,7 +31,7 @@ const Card = ({ setOpenAddEditModal }) => {
 
   const statusStyles = {
     Pending: "text-fuchsia-500",
-    InProgress: "text-yellow-500",
+    InProgress: "text-blue-500",
     OnHold: "text-red-500",
     Completed: "text-green-500",
   };
@@ -46,7 +45,6 @@ const Card = ({ setOpenAddEditModal }) => {
     }
 
     if (name === "Edit") {
-      console.log(task);
       setOpenAddEditModal({
         isShown: true,
         type: "edit",
@@ -74,11 +72,10 @@ const Card = ({ setOpenAddEditModal }) => {
         const priorityStyle = priorityStyles[task.priority] || {
           icon: null,
         };
-
         const statusStyle = statusStyles[task.status] || null;
 
-        const date = moment(task.expiration).format("DD-MM-YYYY");
-        const time = moment(task.expiration).format("HH:mm:ss");
+        const date = formatDate(task.dueDate).slice(0, 10);
+        const time = formatDate(task.dueDate).slice(11, 16);
         return (
           <Link
             to={`/tasks/${task.id}`}
@@ -162,7 +159,7 @@ const Card = ({ setOpenAddEditModal }) => {
               </h5>
             </div>
 
-            {task.expiration ? (
+            {task.dueDate ? (
               <div className="flex flex-row justify-between text-gray-400 text-sm">
                 <h5>{date}</h5>
                 <h5>{time}</h5>

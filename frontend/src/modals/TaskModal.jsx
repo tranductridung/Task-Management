@@ -5,7 +5,7 @@ import api from "../api/api";
 import { useTasksContext } from "../context/tasksContext";
 import { toast } from "react-toastify";
 import { usePriorityStatusContext } from "../context/priorityStatusContext";
-import { validateDate } from "../utils/helper";
+import { validateDate, formatDate } from "../utils/helper";
 
 // Cấu hình cho react-modal
 Modal.setAppElement("#root");
@@ -24,7 +24,7 @@ const TaskModal = ({ openAddEditModal, setOpenAddEditModal }) => {
     setOpenAddEditModal({ isShown: false, type: "add" });
   };
 
-  // Cập nhật state khi mở modal để chỉnh sửa task
+  // Update input information when add/edit task
   useEffect(() => {
     if (openAddEditModal.type === "add") {
       setTitleInput("");
@@ -33,10 +33,12 @@ const TaskModal = ({ openAddEditModal, setOpenAddEditModal }) => {
       setDueDateInput("");
       setStatusInput("Pending");
     } else {
+      console.log(openAddEditModal.task.dueDate);
       setTitleInput(openAddEditModal.task.title);
       setDescriptionInput(openAddEditModal.task.description);
       setPriorityInput(openAddEditModal.task.priority);
-      setDueDateInput(openAddEditModal.task.expiration);
+
+      setDueDateInput(formatDate(openAddEditModal.task.dueDate));
       setStatusInput(openAddEditModal.task.status);
     }
   }, [openAddEditModal]);
@@ -49,7 +51,7 @@ const TaskModal = ({ openAddEditModal, setOpenAddEditModal }) => {
 
     // Check if due date user pick is valid (before today) or not (after today)
     if (dueDateInput && !validateDate(dueDateInput)) {
-      setError("Due date is not valid!");
+      setError("Due date invalid!");
       return;
     }
 
@@ -59,13 +61,13 @@ const TaskModal = ({ openAddEditModal, setOpenAddEditModal }) => {
       description: descriptionInput,
       status: statusInput,
       priority: priorityInput,
-      expiration: dueDateInput ? new Date(dueDateInput).toISOString() : null,
+      dueDate: dueDateInput ? new Date(dueDateInput).toISOString() : null,
     };
 
     try {
       if (openAddEditModal.type === "add") {
         const response = await api.post("/tasks", taskData);
-        const createdTask = response.data;
+        const createdTask = response.data.data.Task;
 
         const taskAdd =
           (createdTask.status === status || status === "All") &&
@@ -76,13 +78,11 @@ const TaskModal = ({ openAddEditModal, setOpenAddEditModal }) => {
         setTasks(taskAdd);
         toast.success("Task created!");
       } else {
-        console.log("task data of edit: ", taskData);
         const response = await api.put(
           `/tasks/${openAddEditModal.task.id}`,
           taskData
         );
-        const editedTask = response.data;
-        console.log(editedTask, status, priority);
+        const editedTask = response.data.data.Task;
 
         setTasks((prevTasks) =>
           prevTasks

@@ -8,8 +8,8 @@ const cookieParser = require("cookie-parser");
 const CommentHistory = require("./Models/CommentHistoryModel.js");
 const User = require("./Models/UserModel.js");
 const Comment = require("./Models/CommentModel");
-const Task = require("./Models/TaskModel");
 const UserTask = require("./Models/UserTaskModel");
+const Task = require("./Models/TaskModel.js");
 const Tag = require("./Models/TagModel");
 const Token = require("./Models/TokenModel");
 const app = express();
@@ -28,6 +28,6 @@ app.use("/api/users", require("./Routes/UserRoute.js"));
 app.use("/api/tasks", require("./Routes/TaskRoute.js"));
 
 // sequelize.sync({ force: true });
-
+require("./Cronjob/tasksReminder.js");
 app.use(errorHandler);
 app.listen(process.env.PORT);

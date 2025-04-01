@@ -1,30 +1,39 @@
-const sequelize = require('../Config/db')
-const { DataTypes } = require('sequelize')
+const sequelize = require("../Config/db");
+const { DataTypes } = require("sequelize");
 
-const Task = sequelize.define('Task', {
+const Task = sequelize.define(
+  "Task",
+  {
     title: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     description: {
-        type: DataTypes.TEXT,
+      type: DataTypes.TEXT,
     },
     status: {
-        type: DataTypes.ENUM('Pending', 'InProgress', 'Completed', 'OnHold', 'Cancelled', 'Failed', 'Scheduled', 'Delayed'),
-        allowNull: false,
-        defaultValue: 'Pending'
+      type: DataTypes.ENUM("Pending", "InProgress", "Completed", "OnHold"),
+      allowNull: false,
+      defaultValue: "Pending",
     },
-    expiration: {
-        type: DataTypes.DATE,
-        // validate: {
-        //     isAfter: new Date().toISOString()
-        // },
+    dueDate: {
+      type: DataTypes.DATE,
+      validate: {
+        isAfter: new Date().toISOString(),
+      },
     },
     priority: {
-        type: DataTypes.ENUM('High', 'Medium', 'Low'),
-        allowNull: false,
-        defaultValue: 'Low',
-    }
-}, { timestamps: true })
+      type: DataTypes.ENUM("High", "Medium", "Low"),
+      allowNull: false,
+      defaultValue: "Low",
+    },
+    isExpired: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+  },
+  { timestamps: true }
+);
 
-module.exports = Task
+module.exports = Task;

@@ -19,3 +19,14 @@ export const getInitials = (str) => {
 
   return initials.join("");
 };
+
+// Format date from utc to datetime local
+export const formatDate = (utcString) => {
+  if (!utcString) return "";
+  const date = new Date(utcString);
+  const localISO = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 16);
+
+  return localISO;
+};

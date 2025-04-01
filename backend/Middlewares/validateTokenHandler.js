@@ -20,8 +20,7 @@ const validateToken = asyncHandler(async (req, res, next) => {
       id: decoded.userID,
       email: decoded.email,
       userName: decoded.userName,
-      firstName: decoded.firstName,
-      lastName: decoded.lastName,
+      fullName: decoded.fullName,
     };
 
     next();

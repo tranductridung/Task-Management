@@ -1,8 +1,13 @@
-const { Sequelize } = require('sequelize')
+const { Sequelize } = require("sequelize");
+require("dotenv").config();
+const sequelize = new Sequelize(
+  process.env.DATABASE,
+  process.env.DATABASE_USENAME,
+  process.env.DATABASE_PASSWORD,
+  {
+    host: "localhost",
+    dialect: "mysql",
+  }
+);
 
-const sequelize = new Sequelize('task_management', 'root', 'tridung', {
-    host: 'localhost',
-    dialect: 'mysql'
-})
-
-module.exports = sequelize
+module.exports = sequelize;

@@ -10,30 +10,41 @@ const validator = require("validator");
 
 const getUsers = asyncHandler(async (req, res) => {
   const users = await User.findAll({
-    attributes: { exclude: ["password"] },
+    attributes: { exclude: ["password", "createdAt", "updatedAt"] },
   });
 
-  return res.json(users);
+  return res.json({
+    success: "true",
+    message: "List of users retrieved successfully!",
+    data: {
+      users: users,
+    },
+  });
 });
 
 const getUser = asyncHandler(async (req, res) => {
   const userId = req.userInfo.id;
   const user = await User.findByPk(userId, {
-    attributes: { exclude: ["password"] },
+    attributes: { exclude: ["password", "createdAt", "updatedAt"] },
   });
 
-  if (!user || user.length === 0) {
-    res.status(404);
-    throw new Error("User not found");
-  }
-  return res.status(200).json(user);
+  return res.json({
+    success: "true",
+    message: "User information retrieved successfully!",
+    data: {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      userName: user.userName,
+    },
+  });
 });
 
 const register = asyncHandler(async (req, res) => {
-  const { email, userName, firstName, lastName, password } = req.body;
+  const { email, userName, fullName, password } = req.body;
 
-  if (!email || !userName || !firstName || !lastName || !password) {
-    res.status(401);
+  if (!email || !userName || !fullName || !password) {
+    res.status(400);
     throw new Error("All field are mandatory");
   }
 
@@ -52,18 +63,28 @@ const register = asyncHandler(async (req, res) => {
 
   if (isEmailExist) {
     res.status(401);
-    throw new Error("Email has been registered.");
+    throw new Error("Email has been used.");
   }
 
   const user = await User.create({
     email: email,
     userName: userName,
-    firstName: firstName,
-    lastName: lastName,
+    fullName: fullName,
     password: await bcrypt.hash(password, 10),
   });
 
-  return res.status(200).json(user);
+  return res.status(200).json({
+    success: "true",
+    message: "Register successfully!",
+    data: {
+      user: {
+        id: user.id,
+        email: user.email,
+        userName: user.userName,
+        fullName: user.fullName,
+      },
+    },
+  });
 });
 
 const login = asyncHandler(async (req, res) => {
@@ -86,8 +107,7 @@ const login = asyncHandler(async (req, res) => {
         userID: user.id,
         email: user.email,
         userName: user.userName,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        fullName: user.fullName,
       },
       process.env.ACCESS_TOKEN,
       {
@@ -99,8 +119,7 @@ const login = asyncHandler(async (req, res) => {
         userID: user.id,
         email: user.email,
         userName: user.userName,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        fullName: user.fullName,
       },
       process.env.REFRESH_TOKEN,
       {
@@ -116,18 +135,23 @@ const login = asyncHandler(async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      // secure: true,
+      secure: false,
       sameSite: "Strict",
       maxAge: process.env.MAX_AGE * 24 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({
-      accessToken: accessToken,
-      id: user.id,
-      userName: user.userName,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      success: "true",
+      message: "Login successfully!",
+      data: {
+        accessToken: accessToken,
+        User: {
+          id: user.id,
+          userName: user.userName,
+          email: user.email,
+          fullName: user.fullName,
+        },
+      },
     });
   }
 
@@ -136,15 +160,24 @@ const login = asyncHandler(async (req, res) => {
 });
 
 const deleteUser = asyncHandler(async (req, res) => {
-  const user = req.userInfo;
-  await user.destroy();
+  const userId = req.userInfo.id;
 
-  return res.status(200).json("User is deleted");
+  await User.destroy({
+    where: {
+      id: userId,
+    },
+  });
+
+  return res.status(200).json({
+    success: "true",
+    message: "User is deleted",
+    data: {},
+  });
 });
 
 const updateUser = asyncHandler(async (req, res) => {
   const userId = req.userInfo.id;
-  const { userName, firstName, lastName } = req.body;
+  const { userName, fullName } = req.body;
   const user = req.user;
 
   if (userName) {
@@ -163,15 +196,19 @@ const updateUser = asyncHandler(async (req, res) => {
 
   const updateUser = await user.update({
     userName: userName || user.userName,
-    firstName: firstName || user.firstName,
-    lastName: lastName || user.lastName,
+    fullName: fullName || user.fullName,
     updateAt: new Date(),
   });
 
   return res.json({
-    userName: updateUser.userName,
-    firstName: updateUser.firstName,
-    lastName: updateUser.lastName,
+    success: "true",
+    message: "User information update successfully!",
+    data: {
+      user: {
+        userName: updateUser.userName,
+        fullName: updateUser.fullName,
+      },
+    },
   });
 });
 
@@ -187,7 +224,7 @@ const changePassword = asyncHandler(async (req, res) => {
   const isMatch = await bcrypt.compare(oldPassword, user.password);
 
   if (!isMatch) {
-    res.status(400);
+    res.status(401);
     throw new Error("Password incorrect");
   }
 
@@ -196,14 +233,15 @@ const changePassword = asyncHandler(async (req, res) => {
   });
 
   return res.status(200).json({
-    oldPassword: oldPassword,
-    newPassword: newPassword,
+    success: "true",
+    message: "Password change success!",
+    data: {},
   });
 });
 
 const refreshToken = asyncHandler(async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
-
+  console.log("---------", req.cookies);
   // Check if token exists
   const refreshTokenExisting = await Token.findOne({
     where: {
@@ -211,9 +249,9 @@ const refreshToken = asyncHandler(async (req, res) => {
     },
   });
 
-  if (!refreshToken) {
-    res.status(401);
-    throw new Error("Refresh Token is expired");
+  if (!refreshToken || !refreshTokenExisting) {
+    res.status(404);
+    throw new Error("Refresh Token not found!");
   }
 
   const user = jwt.verify(refreshToken, process.env.REFRESH_TOKEN);
@@ -229,27 +267,35 @@ const refreshToken = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("User not found");
   }
-
   const accessToken = jwt.sign(
     {
       userID: user.userID,
       email: user.email,
       userName: user.userName,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      fullName: user.fullName,
     },
     process.env.ACCESS_TOKEN,
     { expiresIn: process.env.EXPIRED_ACCESS_TOKEN }
   );
 
-  return res.json({ accessToken: accessToken });
+  return res.json({
+    success: "true",
+    message: "Refresh successfully!",
+    data: {
+      accessToken: accessToken,
+    },
+  });
 });
 
 const logout = asyncHandler(async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
-  if (!refreshToken) {
-    res.status(404);
-    throw new Error("Refresh token not found!");
+
+  // Delete refresh token in cookie
+  if (refreshToken) {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+    });
   }
 
   const token = await Token.destroy({
@@ -258,23 +304,25 @@ const logout = asyncHandler(async (req, res) => {
     },
   });
 
-  // Delete refresh token in cookie
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: true,
+  return res.status(200).json({
+    success: "true",
+    message: "Logout successfully!",
+    data: {},
   });
-
-  return res.status(200).json("Logout successfully!");
 });
 
 const verifyToken = asyncHandler(async (req, res) => {
-  console.log("-------", req.userInfo);
-  res.json({
-    id: req.userInfo.id,
-    email: req.userInfo.email,
-    userName: req.userInfo.userName,
-    firstName: req.userInfo.firstName,
-    lastName: req.userInfo.lastName,
+  return res.json({
+    success: "true",
+    message: "User verified!",
+    data: {
+      User: {
+        id: req.userInfo.id,
+        email: req.userInfo.email,
+        userName: req.userInfo.userName,
+        fullName: req.userInfo.fullName,
+      },
+    },
   });
 });
 

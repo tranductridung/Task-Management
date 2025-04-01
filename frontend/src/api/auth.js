@@ -6,7 +6,7 @@ export const register = async (userData) => {
 };
 
 export const refreshAccessToken = async () => {
-  const response = await api.post("/refreshToken");
+  const response = await api.post("/refresh");
   return response.data;
 };
 
@@ -17,13 +17,12 @@ export const logout = async (setUser) => {
 };
 
 export const checkAuth = async (setUser) => {
-  const response = await api.get("http://localhost:3000/api/users/verifyToken");
-  console.log(response);
-  setUser({
-    id: response.data.id,
-    userName: response.data.userName,
-    firstName: response.data.firstName,
-    email: response.data.email,
-    lastName: response.data.lastName,
-  });
+  const response = await api.get("users/verify");
+  if (response.data.data)
+    setUser({
+      id: response.data.data.User.id,
+      userName: response.data.data.User.userName,
+      email: response.data.data.User.email,
+      fullName: response.data.data.User.fullName,
+    });
 };

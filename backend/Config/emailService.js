@@ -1,6 +1,5 @@
 const nodemailer = require("nodemailer");
 
-// Tạo transporter (dùng Gmail làm ví dụ)
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -9,7 +8,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Hàm gửi email
 const sendEmail = async (to, subject, text) => {
   try {
     const mailOptions = {
@@ -25,9 +23,4 @@ const sendEmail = async (to, subject, text) => {
   }
 };
 
-sendEmail(
-  "tridung0103@gmail.com",
-  "Subject for test email",
-  "Content of test email"
-);
-// module.exports = sendEmail;
+module.exports = sendEmail;

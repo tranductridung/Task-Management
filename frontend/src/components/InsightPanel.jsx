@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { getInitials } from "../utils/helper";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { useUserContext } from "../context/userContext";
 import { useTasksContext } from "../context/tasksContext";
-import RadialChart from "./RadialChart";
 
 const InsightPanel = () => {
   const navigate = useNavigate();
   const { user } = useUserContext();
 
   const { tasks } = useTasksContext();
+
   const [counts, setCounts] = useState({
     Pending: 0,
     InProgress: 0,
@@ -19,20 +18,27 @@ const InsightPanel = () => {
   });
 
   useEffect(() => {
-    const newCounts = {
-      Pending: 0,
-      InProgress: 0,
-      OnHold: 0,
-      Completed: 0,
+    const fetchData = async () => {
+      const response = await api.get("/tasks/priority/All/status/All");
+      const tasksInfo = response.data.data.Tasks || [];
+
+      const newCounts = {
+        Pending: 0,
+        InProgress: 0,
+        OnHold: 0,
+        Completed: 0,
+      };
+
+      tasksInfo.forEach((task) => {
+        if (newCounts[task.status] !== undefined) {
+          newCounts[task.status]++;
+        }
+      });
+
+      setCounts(newCounts);
     };
 
-    tasks.forEach((task) => {
-      if (newCounts[task.status] !== undefined) {
-        newCounts[task.status]++;
-      }
-    });
-
-    setCounts(newCounts);
+    fetchData();
   }, [tasks]);
 
   const handleLogout = async () => {
@@ -57,7 +63,7 @@ const InsightPanel = () => {
         </div>
         <h1 className="pl-4 text-2xl">
           Hello, <br></br>
-          <b>{user.userName}</b>
+          <b>{user.fullName}</b>
         </h1>
       </div>
 
@@ -91,10 +97,7 @@ const InsightPanel = () => {
         </div>
       </div>
 
-      {/* <div className="flex-1 my-5">
-      </div> */}
-
-      <div className="m-2">
+      <div className="mt-auto mb-5 mx-2">
         <button
           type="submit"
           className="w-full rounded-full bg-red-400 px-10 py-2 hover:bg-red-500 hover:cursor-pointer"

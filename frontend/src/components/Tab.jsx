@@ -36,7 +36,7 @@ const Tab = () => {
         const response = await api.get(
           `/tasks/priority/${newPriority}/status/${newStatus}`
         );
-        setTasks(response.data.tasks || []);
+        setTasks(response.data.data.Tasks || []);
       } catch (error) {
         console.error("Error", error);
         setTasks([]);

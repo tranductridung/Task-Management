@@ -17,7 +17,6 @@ const NavBar = ({ onAddTask }) => {
   };
 
   useEffect(() => {
-    console.log(tasks);
     const count = tasks.filter((task) => task.status === "InProgress").length;
     setInProgressTask(count);
   }, [tasks]);
@@ -38,13 +37,13 @@ const NavBar = ({ onAddTask }) => {
             <b>
               <p className="flex flex-row gap-2">
                 <FcLike className="text-xl" />
-                Welcome to MyTask, {user.firstName} {user.lastName}!
+                Welcome to MyTask, {user.fullName}!
               </p>
             </b>
             <div className="flex">
-              You have &nbsp;
+              You have&nbsp;
               <span className="text-green-400">{inProgressTask}</span>
-              &nbsp; active task
+              &nbsp;active task
             </div>
           </div>
 

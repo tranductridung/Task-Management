@@ -20,7 +20,7 @@ import { getInitials } from "../utils/helper";
 import { useUserContext } from "../context/userContext";
 import { useTasksContext } from "../context/tasksContext";
 import { usePriorityStatusContext } from "../context/priorityStatusContext";
-
+import { formatDate } from "../utils/helper";
 const Task = ({ setOpenAddEditModal }) => {
   const taskId = useParams().taskId;
   const { user } = useUserContext();
@@ -33,14 +33,16 @@ const Task = ({ setOpenAddEditModal }) => {
   const [content, setContent] = useState("");
   const [task, setTask] = useState({});
   const [userEmail, setUserEmail] = useState("");
-  const [role, setRole] = useState("member");
+  const [role, setRole] = useState("Member");
 
   const emailTest = user?.email;
   const listOfMembers = task?.Users ?? [];
+  const formattedDate = formatDate(task.dueDate).slice(0, 10);
+  const formattedTime = formatDate(task.dueDate).slice(11, 16);
 
   // Check if user is the owner of current task
   const isOwner = listOfMembers.filter((member) => {
-    if (member.email === emailTest && member.UserTask.role === "owner")
+    if (member.email === emailTest && member.UserTask.role === "Owner")
       return true;
     return false;
   });
@@ -52,14 +54,15 @@ const Task = ({ setOpenAddEditModal }) => {
         email: `${userEmail}`,
       });
       const taskResponse = await api.get(`tasks/${taskId}`);
-      setTask(taskResponse.data);
-      setIsAddUserModalOpen(false);
+      setTask(taskResponse.data.data.Task);
       toast.success("User added to task");
     } catch (error) {
       setIsAddUserModalOpen(false);
       toast.error("Add user failed");
       console.log("Error add user: ", error);
     }
+
+    setUserEmail("");
   };
 
   const removeUser = async (userId) => {
@@ -67,11 +70,11 @@ const Task = ({ setOpenAddEditModal }) => {
       await api.delete(`tasks/${taskId}/users/${userId}`);
 
       const taskResponse = await api.get(`tasks/${taskId}`);
-      setTask(taskResponse.data);
+      setTask(taskResponse.data.data.Task);
 
       toast.success("Remove user success");
     } catch (error) {
-      console.log(error);
+      console.log("Error remove user", error);
       toast.error("Remove user failed.");
     }
   };
@@ -81,11 +84,14 @@ const Task = ({ setOpenAddEditModal }) => {
       const response = await api.post(`tasks/${taskId}/comments`, {
         content: content,
       });
-
-      setComments((prevComments) => [...prevComments, response.data]);
+      setComments((prevComments) => [
+        ...prevComments,
+        response.data.data.Comment,
+      ]);
       setContent("");
       toast.success("Comment created!");
     } catch (error) {
+      console.log("Error add user", error);
       toast.error("Create comment failed!");
     }
   };
@@ -97,11 +103,10 @@ const Task = ({ setOpenAddEditModal }) => {
       setPriority("All");
       // Get all comment of the task
       const commentsResponse = await api.get(`tasks/${taskId}/comments`);
-      setComments(commentsResponse.data);
-
+      setComments(commentsResponse.data.data.Comments);
       // Get detail of task
       const taskDetailResponse = await api.get(`tasks/${taskId}`);
-      setTask(taskDetailResponse.data);
+      setTask(taskDetailResponse.data.data.Task);
     };
 
     initial();
@@ -111,7 +116,7 @@ const Task = ({ setOpenAddEditModal }) => {
     const initial = async () => {
       try {
         const response = await api.get(`/tasks/priority/All/status/All`);
-        setTasks(response.data.tasks || []);
+        setTasks(response.data.data.Tasks || []);
       } catch (error) {
         console.error("Error", error);
         setTasks([]);
@@ -119,6 +124,7 @@ const Task = ({ setOpenAddEditModal }) => {
     };
     initial();
   }, []);
+
   const priorityStyles = {
     High: {
       bg: "bg-red-300 text-red-800",
@@ -192,9 +198,11 @@ const Task = ({ setOpenAddEditModal }) => {
             <p className="w-full break-words pl-8"> {task.description}</p>
           </div>
 
-          <div className="flex flex-row justify-between">
-            {task.expriration ? (
-              <p className="text-gray-500">Due date: : Fri Feb 09 2024</p>
+          <div className="flex flex-row justify-end">
+            {task.dueDate ? (
+              <p className="text-gray-500">
+                {formattedDate} {formattedTime}
+              </p>
             ) : (
               <p></p>
             )}
@@ -220,12 +228,11 @@ const Task = ({ setOpenAddEditModal }) => {
                     className="flex flex-row my-4 pt-2 items-center border-t-2 border-gray-200"
                   >
                     <span className="text-white mr-3 h-[90%] px-2.5 py-2 bg-blue-400 rounded-full text-lg">
-                      {getInitials(`${member.firstName} ${member.lastName}`)}
+                      {getInitials(`${member.fullName}`)}
                     </span>
                     <div>
                       <p className="font-bold">
-                        {member.firstName} {member.lastName} (@{member.userName}
-                        )
+                        {member.fullName} (@{member.userName})
                       </p>
                       <p className="text-gray-500">{member.UserTask.role}</p>
                     </div>
@@ -260,7 +267,7 @@ const Task = ({ setOpenAddEditModal }) => {
                   </div>
                   <div className="pl-2">
                     <p className="font-semibold text-lg">
-                      {comment.User.firstName} {comment.User.lastName}
+                      {comment.User.fullName}
                     </p>
                     <p className="text-gray-500">{comment.content}</p>
                   </div>

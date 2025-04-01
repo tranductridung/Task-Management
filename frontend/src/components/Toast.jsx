@@ -4,7 +4,7 @@ const Toast = ({ message, type, onClose }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
-    }, 3000); // 3 giây tự động tắt
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [onClose]);

@@ -11,8 +11,7 @@ const UserInfoModal = ({ isOpen, onClose }) => {
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState("");
 
-  const [firstNameInput, setFirstNameInput] = useState(user.firstName);
-  const [lastNameInput, setLastNameInput] = useState(user.lastName);
+  const [fullNameInput, setFullNameInput] = useState(user.fullName);
   const [userNameInput, setUserNameInput] = useState(user.userName);
 
   const onChangePassword = async () => {
@@ -39,12 +38,7 @@ const UserInfoModal = ({ isOpen, onClose }) => {
   };
 
   const onSaveChange = async () => {
-    if (!firstNameInput) {
-      setError("Please enter your first name");
-      return;
-    }
-
-    if (!lastNameInput) {
+    if (!fullNameInput) {
       setError("Please enter your last name");
       return;
     }
@@ -57,14 +51,12 @@ const UserInfoModal = ({ isOpen, onClose }) => {
     setError("");
     try {
       await api.put("/users", {
-        firstName: firstNameInput,
-        lastName: lastNameInput,
+        fullName: fullNameInput,
         userName: userNameInput,
       });
       setUser({
         ...user,
-        firstName: firstNameInput,
-        lastName: lastNameInput,
+        fullName: fullNameInput,
         userName: userNameInput,
       });
       toast.success("Update information success!");
@@ -81,54 +73,37 @@ const UserInfoModal = ({ isOpen, onClose }) => {
       <div className="h-full w-full bg-white p-6 rounded-lg shadow-lg items-center">
         <div className="flex flex-col justify-start pb-2">
           <h2 className="flex text-2xl font-bold">
-            {user.firstName} {user.lastName} (@{user.userName})
+            {user.fullName} {user.lastName} (@{user.userName})
           </h2>
 
           <h2 className="flex items-center text-lg text-gray-500">
             {user.email}
           </h2>
         </div>
-        {/* First name input */}
+        {/* Full name input */}
         <div className="border-t-2 border-gray-200 flex flex-row gap-2 py-3">
           <label
-            htmlFor="firstName"
+            htmlFor="fullName"
             className="mr-15 mb-2 text-sm font-medium text-gray-500 dark:text-white"
           >
-            First name
+            Full name
           </label>
           <input
-            value={firstNameInput || ""}
+            value={fullNameInput || ""}
             type="text"
-            id="firstName"
+            id="fullName"
             className="flex flex-1 h-fit py-2 px-3 bg-gray-50 border border-gray-300
              text-gray-900 text-sm rounded-lg focus:ring-blue-500
               focus:border-blue-500  dark:bg-gray-700
                dark:border-gray-600 dark:placeholder-gray-400 
                dark:text-white dark:focus:ring-blue-500 
                dark:focus:border-blue-500"
-            onChange={(e) => setFirstNameInput(e.target.value)}
-            placeholder="First Name"
+            onChange={(e) => setFullNameInput(e.target.value)}
+            placeholder="Full Name"
             required
           />
         </div>
-        {/* Last name input */}
-        <div className="border-t-2 border-gray-200 flex flex-row gap-2 py-3">
-          <label
-            htmlFor="lastName"
-            className="mr-15 mb-2 text-sm font-medium text-gray-500 dark:text-white"
-          >
-            Last name
-          </label>
-          <input
-            value={lastNameInput || ""}
-            type="text"
-            id="lastName"
-            className="p-2 flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            onChange={(e) => setLastNameInput(e.target.value)}
-            placeholder="Last Name"
-            required
-          />
-        </div>
+
         {/* Username input */}
         <div className="border-t-2 border-gray-200 flex flex-row gap-2 py-3">
           <label

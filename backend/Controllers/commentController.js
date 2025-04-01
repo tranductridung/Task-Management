@@ -5,14 +5,20 @@ const User = require("../Models/UserModel");
 
 const getComments = expressAsyncHandler(async (req, res) => {
   const comments = await Comment.findAll();
-  return res.json(comments);
+  return res.status(200).json({
+    success: "true",
+    message: "List of comment retrieved succesfully!",
+    data: {
+      Comments: comments,
+    },
+  });
 });
 
 const createComment = expressAsyncHandler(async (req, res) => {
   const userId = req.userInfo.id;
   const { content } = req.body;
   const taskId = parseInt(req.params.taskId);
-  const { userName, lastName, firstName } = req.userInfo;
+  const { userName, fullName } = req.userInfo;
 
   if (!content) {
     res.status(400);
@@ -24,6 +30,7 @@ const createComment = expressAsyncHandler(async (req, res) => {
     userId: userId,
     taskId: taskId,
   });
+
   const commentHistory = await CommentHistory.create({
     newContent: content,
     editedBy: userName,
@@ -31,12 +38,17 @@ const createComment = expressAsyncHandler(async (req, res) => {
   });
 
   return res.json({
-    id: comment.id,
-    content: comment.content,
-    User: {
-      userName: userName,
-      firstName: firstName,
-      lastName: lastName,
+    success: "true",
+    message: "Create comment successfully!",
+    data: {
+      Comment: {
+        id: comment.id,
+        content: comment.content,
+        User: {
+          userName: userName,
+          fullName: fullName,
+        },
+      },
     },
   });
 });
@@ -54,7 +66,11 @@ const editComment = expressAsyncHandler(async (req, res) => {
   }
 
   if (newContent === comment.content) {
-    return res.status(200).json("Comment is not modified");
+    return res.status(304).json({
+      success: "true",
+      message: "Comment is not modified",
+      data: {},
+    });
   }
 
   const commentHistory = await CommentHistory.create({
@@ -68,8 +84,11 @@ const editComment = expressAsyncHandler(async (req, res) => {
   });
 
   return res.json({
-    comment: comment,
-    commentHistory: commentHistory,
+    success: "true",
+    message: "Edit comment succeccfully!",
+    data: {
+      newContent: newContent,
+    },
   });
 });
 
@@ -79,12 +98,16 @@ const deleteComment = expressAsyncHandler(async (req, res) => {
 
   if (comment.userId !== userId) {
     res.status(403);
-    throw new Error("Just the user who create comment can edit");
+    throw new Error("Just the user who create comment can delete");
   }
 
   await comment.destroy();
 
-  return res.status(200).json("Delete comment successfully!");
+  return res.status(200).json({
+    success: "true",
+    message: "Delete comment successfully!",
+    data: {},
+  });
 });
 
 const getCommentsOfTask = expressAsyncHandler(async (req, res) => {
@@ -93,7 +116,7 @@ const getCommentsOfTask = expressAsyncHandler(async (req, res) => {
   const comments = await Comment.findAll({
     include: {
       model: User,
-      attributes: ["userName", "firstName", "lastName"],
+      attributes: ["userName", "fullName"],
     },
     where: {
       taskId: taskId,
@@ -101,7 +124,13 @@ const getCommentsOfTask = expressAsyncHandler(async (req, res) => {
     attributes: ["content", "id"],
   });
 
-  return res.status(200).json(comments);
+  return res.status(200).json({
+    success: "true",
+    message: "Comments of task retrieved successfully!",
+    data: {
+      Comments: comments,
+    },
+  });
 });
 
 const getCommentHistory = expressAsyncHandler(async (req, res) => {
@@ -111,9 +140,14 @@ const getCommentHistory = expressAsyncHandler(async (req, res) => {
     where: {
       commentId: commentId,
     },
+    attributes: { exclude: ["commentId", "createdAt", "updatedAt"] },
   });
 
-  return res.json(commentHitories);
+  return res.status(200).json({
+    success: "true",
+    message: "Comment histories of task retrieved successfully!",
+    CommentHitories: commentHitories,
+  });
 });
 
 module.exports = {

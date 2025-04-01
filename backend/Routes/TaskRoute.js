@@ -21,7 +21,7 @@ const {
   updateTask,
   deleteTask,
   addUser,
-  getUsersInTask,
+  getUsersOfTask,
   getTasksOfUser,
   removeUser,
   updateStatus,
@@ -67,7 +67,7 @@ router.get(
 );
 
 router.patch(
-  "/:taskId/updateStatus",
+  "/:taskId/status",
   validateToken,
   checkTaskExist,
   checkMember,
@@ -76,13 +76,14 @@ router.patch(
 
 router
   .route("/:taskId/users")
-  .get(validateToken, checkTaskExist, checkMember, getUsersInTask)
+  .get(validateToken, checkTaskExist, checkMember, getUsersOfTask)
   .post(validateToken, checkUserAndTaskExist, checkOwner, addUser);
 
 router
   .route("/:taskId/users/:userId")
-  .delete(validateToken, checkUserAndTaskExist, checkOwner, removeUser)
-  .put(validateToken, checkUserAndTaskExist, checkOwner, changeRole);
+  .put(validateToken, checkUserAndTaskExist, checkOwner, changeRole)
+  .delete(validateToken, checkUserAndTaskExist, checkOwner, removeUser);
+
 router
   .route("/:taskId")
   .get(validateToken, checkMember, getTask)

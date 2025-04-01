@@ -51,20 +51,19 @@ const Login = () => {
         { withCredentials: true }
       )
       .then((response) => {
-        const accessToken = response.data.accessToken;
+        const accessToken = response.data.data.accessToken;
         localStorage.setItem("accessToken", accessToken);
 
         setUser({
-          id: response.data.id,
-          userName: response.data.userName,
-          firstName: response.data.firstName,
-          lastName: response.data.lastName,
-          email: response.data.email,
+          id: response.data.data.User.id,
+          userName: response.data.data.User.userName,
+          fullName: response.data.data.User.fullName,
+          email: response.data.data.User.email,
         });
         navigate("/");
       })
       .catch((err) => {
-        setError(err.response.data.message);
+        setError(err);
       });
   };
 

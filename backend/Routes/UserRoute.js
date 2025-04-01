@@ -20,15 +20,15 @@ const router = express.Router();
 router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", validateToken, logout);
-router.get("/refreshToken", refreshToken);
+router.post("/refresh", refreshToken);
 router.post("/changePassword", validateToken, checkUserExist, changePassword);
-router.get("/verifyToken", validateToken, verifyToken);
+router.get("/verify", validateToken, verifyToken);
 
-router.get("/getAllUsers", getUsers);
+router.get("/", getUsers);
 
 router
-  .route("/")
-  .get(getUser)
+  .route("/me")
+  .get(validateToken, checkUserExist, getUser)
   .delete(validateToken, checkUserExist, deleteUser)
   .put(validateToken, checkUserExist, updateUser);
 

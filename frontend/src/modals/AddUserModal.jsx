@@ -13,44 +13,41 @@ const AddUserModal = ({
 
   return (
     <div className="relative inset-0 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <div className="flex flex-row justify-between py-2 align-middle items-center">
-          <h2 className="flex items-center text-xl font-bold">
-            Add user to Task
-          </h2>
-
+      <div className=" bg-white p-6 max-w-84 rounded-lg shadow-lg">
+        <div className="flex flex-row justify-end align-middle items-center">
           <button
-            className="p-2 hover:cursor-pointer rounded-full flex items-center justify-center hover:bg-slate-500 text-2xl"
+            className="hover:cursor-pointer rounded-full flex items-center justify-center hover:bg-slate-500 text-2xl"
             onClick={onClose}
           >
             <MdClose />
           </button>
         </div>
 
+        <label className="input-label">Email</label>
         <input
-          className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="input-box2"
           rows="4"
-          placeholder="Enter username or email..."
+          placeholder="Enter email of user..."
           value={userEmail}
           onChange={(e) => setUserEmail(e.target.value)}
         />
 
-        <label className="input-label">Priority Level</label>
+        <label className="input-label">Role</label>
         <select
           className="input-box2"
           value={role ? role : ""}
           onChange={(e) => setRole(e.target.value)}
         >
-          <option value="owner">Owner</option>
-          <option value="member">Member</option>
+          <option value="Member">Member</option>
+          <option value="Owner">Owner</option>
         </select>
 
         <div className="mt-4 flex justify-end space-x-2">
           <button
-            className="btn-primary font-medium mt-5 p-3"
+            className="btn-primary-fullsize font-medium mt-5 p-3"
             onClick={onSubmit}
           >
-            Submit
+            Add User
           </button>
         </div>
       </div>

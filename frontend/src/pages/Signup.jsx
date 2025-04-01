@@ -9,8 +9,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [fullName, setfullName] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -27,12 +26,7 @@ const Signup = () => {
       return;
     }
 
-    if (!firstName) {
-      setError("Please enter the first name");
-      return;
-    }
-
-    if (!lastName) {
+    if (!fullName) {
       setError("Please enter the last name");
       return;
     }
@@ -45,15 +39,14 @@ const Signup = () => {
         email: email,
         password: password,
         userName: username,
-        firstName: firstName,
-        lastName: lastName,
+        fullName: fullName,
       })
       .then(() => {
         toast.success("Register success!");
         navigate("/login");
       })
       .catch((err) => {
-        console.log(err.response.data.message);
+        console.log("Sign up error", err.response.data.data.message);
       });
   };
 
@@ -81,17 +74,10 @@ const Signup = () => {
 
             <input
               type="text"
-              placeholder="FirstName"
+              placeholder="Full Name"
               className="input-box border-input"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="LastName"
-              className="input-box border-input"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              value={fullName}
+              onChange={(e) => setfullName(e.target.value)}
             />
             <PasswordInput
               value={password}
