@@ -4,7 +4,7 @@ const Task = require("../Models/TaskModel");
 const { sendEmail } = require("../Config/emailService");
 const User = require("../Models/UserModel");
 
-// Chạy cron job mỗi phút để kiểm tra task hết hạn
+// Run cron job every 5 minutes to check for expired tasks
 cron.schedule("*/5 * * * *", async () => {
   try {
     const now = new Date();
@@ -28,7 +28,6 @@ cron.schedule("*/5 * * * *", async () => {
       const taskTitle = task.dataValues.title;
       const users = task.dataValues.Users;
 
-      console.log(`;;;;;;;;;;;;;;;;;;;${taskTitle};;;;;;;;;;;;;;;;;;;`);
       users.map((user, index) => {
         to, subject, text;
         const email = user.dataValues.email;
@@ -38,6 +37,6 @@ cron.schedule("*/5 * * * *", async () => {
       await task.update({ isExpired: true });
     });
   } catch (error) {
-    console.error("❌ Lỗi khi chạy cron job:", error);
+    console.error("❌ Cron job error:", error);
   }
 });

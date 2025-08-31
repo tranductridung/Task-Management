@@ -13,6 +13,9 @@ const Login = () => {
   const navigate = useNavigate();
   const { setUser } = useUserContext();
 
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
   useEffect(() => {
     const checkLogin = async () => {
       try {
@@ -43,7 +46,7 @@ const Login = () => {
 
     await axios
       .post(
-        "http://localhost:3000/api/users/login",
+        `${backendUrl}/api/users/login`,
         {
           email: email,
           password: password,

@@ -13,6 +13,9 @@ const Signup = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
   const handleSignup = async (e) => {
     e.preventDefault();
 
@@ -35,7 +38,7 @@ const Signup = () => {
 
     // Signup API call
     await axios
-      .post("http://localhost:3000/api/users/register", {
+      .post(`${backendUrl}/api/users/register`, {
         email: email,
         password: password,
         userName: username,
