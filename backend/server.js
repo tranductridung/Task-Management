@@ -21,12 +21,14 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://task-management-umber-six.vercel.app",
+      /https:\/\/.*\.vercel\.app$/,
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+
 app.use("/api/users", require("./Routes/UserRoute.js"));
 app.use("/api/tasks", require("./Routes/TaskRoute.js"));
 
