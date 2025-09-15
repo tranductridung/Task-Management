@@ -298,11 +298,7 @@ const logout = asyncHandler(async (req, res) => {
     });
   }
 
-  const token = await Token.destroy({
-    where: {
-      refreshToken: refreshToken,
-    },
-  });
+  await Token.destroy({ where: { refreshToken: refreshToken } });
 
   return res.status(200).json({
     success: "true",

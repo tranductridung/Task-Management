@@ -13,7 +13,6 @@ const {
 } = require("../Controllers/userController");
 const { checkUserExist } = require("../Middlewares/checkingHandler");
 const validateToken = require("../Middlewares/validateTokenHandler");
-const { ValidationErrorItem } = require("sequelize");
 
 const router = express.Router();
 

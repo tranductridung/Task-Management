@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const cron = require("node-cron");
 const Task = require("../Models/TaskModel");
-const { sendEmail } = require("../Config/emailService");
+const sendEmail = require("../Config/emailService");
 const User = require("../Models/UserModel");
 
 // Run cron job every 5 minutes to check for expired tasks
@@ -29,7 +29,6 @@ cron.schedule("*/5 * * * *", async () => {
       const users = task.dataValues.Users;
 
       users.map((user, index) => {
-        to, subject, text;
         const email = user.dataValues.email;
         sendEmail(email, `Task expired`, `The task ${taskTitle} is expired!`);
       });
